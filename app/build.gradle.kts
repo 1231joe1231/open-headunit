@@ -129,6 +129,14 @@ android {
 
     signingConfigs {
         getByName("debug") {
+            // Fork builds share one throwaway debug key, so a CI build installs over the last one.
+            val forkDebugKeystore = rootProject.file("fork-debug.keystore")
+            if (forkDebugKeystore.exists()) {
+                storeFile = forkDebugKeystore
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
             // storeFile = file("../keystore.jkc")
             // storePassword = property("HEADUNIT_KEYSTORE_PASSWORD") as String
             // keyAlias = property("HEADUNIT_KEYSTORE_ALIAS") as String

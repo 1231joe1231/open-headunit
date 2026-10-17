@@ -52,6 +52,7 @@ import com.andrerinas.openheadunit.view.ProjectionView
 import com.andrerinas.openheadunit.view.TextureProjectionView
 import com.andrerinas.openheadunit.utils.Settings
 import com.andrerinas.openheadunit.utils.ToastUtils
+import com.andrerinas.openheadunit.utils.TsMainUiAudioChannel
 import com.andrerinas.openheadunit.view.OverlayTouchView
 import com.andrerinas.openheadunit.view.PerformanceOverlay
 import com.andrerinas.openheadunit.utils.HeadUnitScreenConfig
@@ -1263,6 +1264,8 @@ class AapProjectionActivity : SurfaceActivity(), IProjectionView.Callbacks, Vide
         userLeftDeliberately = false
         closeCallRaiseEpisode("the projection is back in front")
         AppLog.i("AapProjectionActivity: onResume")
+        // Coming back from the stock car screen on a TopWay unit leaves the speakers on the car.
+        TsMainUiAudioChannel.restore(this, "projection resumed")
         // Show the one-time rename notice even here, on top of an active projection.
         RenameNotice.maybeShow(this, App.provide(this).settings)
         Aa174Notice.maybeShow(this, App.provide(this).settings)

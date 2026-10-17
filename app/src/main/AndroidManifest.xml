@@ -15,6 +15,8 @@
         <!-- OEM AA/CarPlay apps that conflict with Open Headunit -->
         <package android:name="com.zjinnova.zlink" />
         <package android:name="com.syu.carlink" />
+        <!-- TopWay stock UI: asked to hand the speakers back after its car screen -->
+        <package android:name="com.ts.MainUI" />
         <package android:name="com.zjinnova.zlink5" />
         <package android:name="cn.manstep.phonemirrorBox" />
         <package android:name="cn.manstep.phonemirrorBox.nomap" />
