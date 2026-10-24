@@ -68,7 +68,7 @@ class AapBroadcastReceiver : BroadcastReceiver() {
             }
         } else if (intent.action == ProjectionActivityRequest.action){
             if (component.commManager.connectionState.value is CommManager.ConnectionState.TransportStarted) {
-                val aapIntent = Intent(context, AapProjectionActivity::class.java)
+                val aapIntent = Intent(context, AapProjectionActivity.launchClass)
                 aapIntent.putExtra(AapProjectionActivity.EXTRA_FOCUS, true)
                 aapIntent.flags = FLAG_ACTIVITY_NEW_TASK
                 context.startActivity(aapIntent)

@@ -113,7 +113,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".aap.AapProjectionActivity"
+            android:name="com.ts.bt.hur.HurProjectionActivity"
             android:configChanges="uiMode|orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation"
             android:exported="true"
             android:hardwareAccelerated="true"

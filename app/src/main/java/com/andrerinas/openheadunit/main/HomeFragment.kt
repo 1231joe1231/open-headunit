@@ -418,7 +418,7 @@ class HomeFragment : Fragment() {
 
         self_mode_button.setOnClickListener {
             if (commManager.isConnected) {
-                val aapIntent = Intent(requireContext(), AapProjectionActivity::class.java)
+                val aapIntent = Intent(requireContext(), AapProjectionActivity.launchClass)
                 aapIntent.putExtra(AapProjectionActivity.EXTRA_FOCUS, true)
                 startActivity(aapIntent)
             } else {
@@ -448,7 +448,7 @@ class HomeFragment : Fragment() {
         usb.setOnClickListener {
             // Already connected to Android Auto - just show projection
             if (commManager.isConnected) {
-                val aapIntent = Intent(requireContext(), AapProjectionActivity::class.java)
+                val aapIntent = Intent(requireContext(), AapProjectionActivity.launchClass)
                 aapIntent.putExtra(AapProjectionActivity.EXTRA_FOCUS, true)
                 startActivity(aapIntent)
                 return@setOnClickListener

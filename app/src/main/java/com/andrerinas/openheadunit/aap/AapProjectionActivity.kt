@@ -79,7 +79,7 @@ import com.andrerinas.openheadunit.main.AppDrawerFragment
 import java.io.File
 import kotlin.math.abs
 
-class AapProjectionActivity : SurfaceActivity(), IProjectionView.Callbacks, VideoDimensionsListener {
+open class AapProjectionActivity : SurfaceActivity(), IProjectionView.Callbacks, VideoDimensionsListener {
 
     private enum class OverlayState { STARTING, RECONNECTING, HIDDEN }
 
@@ -2380,8 +2380,14 @@ class AapProjectionActivity : SurfaceActivity(), IProjectionView.Callbacks, Vide
          */
         @Volatile var pendingStatusText: String? = null
 
+        /**
+         * The class actually registered in the manifest. It lives under com.ts.bt so the TopWay
+         * MainUI turns the rotary knob into D-pad up/down for it (see [com.ts.bt.hur.HurProjectionActivity]).
+         */
+        val launchClass: Class<out AapProjectionActivity> = com.ts.bt.hur.HurProjectionActivity::class.java
+
         fun intent(context: Context): Intent {
-            val aapIntent = Intent(context, AapProjectionActivity::class.java)
+            val aapIntent = Intent(context, launchClass)
             aapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             return aapIntent
         }
