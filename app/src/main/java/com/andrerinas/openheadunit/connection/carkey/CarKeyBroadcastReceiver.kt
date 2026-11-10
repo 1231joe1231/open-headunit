@@ -11,6 +11,7 @@ import com.andrerinas.openheadunit.App
 import com.andrerinas.openheadunit.connection.CommManager
 import com.andrerinas.openheadunit.contract.KeyIntent
 import com.andrerinas.openheadunit.utils.AppLog
+import com.andrerinas.openheadunit.utils.TsMainUiAudioChannel
 
 /**
  * A comprehensive receiver for steering wheel and hardware buttons,
@@ -124,6 +125,13 @@ class CarKeyBroadcastReceiver : BroadcastReceiver(), CarKeyReceiver {
         when (action) {
             // --- Protocols with proper DOWN/UP separation ---
             "com.microntek.irkeyDown", "com.microntek.irkeyUp" -> {
+                // TopWay MainUI also fires irkeyDown (never irkeyUp) on track skip, carrying its own
+                // key ids (45/46), which are KEYCODE_Q/KEYCODE_R to Android Auto and pull up the focus
+                // cursor. The real media key already reaches the projection as a KeyEvent, so drop these.
+                if (TsMainUiAudioChannel.isPresent(context)) {
+                    AppLog.i("CarKeyReceiver: ignoring $action from TopWay MainUI (keys arrive as KeyEvents)")
+                    return
+                }
                 val keyCode = intent.getIntExtra("keyCode", -1)
                 if (keyCode != -1) handleKey(context, keyCode, action.endsWith("keyDown"))
             }
