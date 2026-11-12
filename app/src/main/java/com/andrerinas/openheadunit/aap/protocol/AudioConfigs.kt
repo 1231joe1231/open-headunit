@@ -54,14 +54,10 @@ object AudioConfigs {
         }.build()
         audioTracks.put(Channel.ID_AUD, audioConfig0)
 
-        // The speech sink carries more than navigation prompts: the phone routes any app that
-        // takes transient audio focus here, Bilibili's video playback among them. At 16 kHz mono
-        // that audio lost everything above 8 kHz and its stereo image. 48 kHz stereo is inside
-        // the set the phone accepts for audio sinks (16/48 kHz, 16 bit, 1 or 2 channels).
         val audioConfig1 = Media.AudioConfiguration.newBuilder().apply {
-            sampleRate = AudioDecoder.SAMPLE_RATE_HZ_48
+            sampleRate = AudioDecoder.SAMPLE_RATE_HZ_16
             numberOfBits = 16
-            numberOfChannels = 2
+            numberOfChannels = 1
         }.build()
         audioTracks.put(Channel.ID_AU1, audioConfig1)
 
