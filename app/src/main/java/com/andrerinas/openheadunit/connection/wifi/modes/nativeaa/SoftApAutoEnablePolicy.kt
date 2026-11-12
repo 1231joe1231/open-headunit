@@ -5,7 +5,9 @@ package com.andrerinas.openheadunit.connection.wifi.modes.nativeaa
  *
  * An enable within about 10 s of a radio change fails, so none that soon after the AP drops, and a
  * failed one gets one more, spaced from its failure. None while the car is off or the screen is dark,
- * nor just after a wake: the unit restores its own AP.
+ * nor just after a wake: the unit restores its own AP. None while a projection session is live
+ * either: it is already running over some other network, most often the phone's hotspot this
+ * unit joined, and starting an access point takes the radio from that network and ends it.
  */
 object SoftApAutoEnablePolicy {
 
@@ -28,8 +30,9 @@ object SoftApAutoEnablePolicy {
         sinceWakeMs: Long? = null,
         sinceApDownMs: Long? = null,
         screenOff: Boolean = false,
+        sessionLive: Boolean = false,
     ): Boolean {
-        if (!enabledInSettings || accOff || screenOff || attemptInFlight || attempts >= MAX_ATTEMPTS) return false
+        if (!enabledInSettings || accOff || screenOff || sessionLive || attemptInFlight || attempts >= MAX_ATTEMPTS) return false
         if (sinceWakeMs != null && sinceWakeMs < FIRST_ATTEMPT_AFTER_WAKE_MS) return false
         if (sinceApDownMs != null && sinceApDownMs < RETRY_AFTER_MS) return false
         if (attempts == 0) return waitedMs >= FIRST_ATTEMPT_AFTER_MS

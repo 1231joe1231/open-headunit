@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.PowerManager
 import androidx.core.content.ContextCompat
+import com.andrerinas.openheadunit.App
 import com.andrerinas.openheadunit.app.AccPowerState
 import com.andrerinas.openheadunit.R
 import com.andrerinas.openheadunit.connection.ConnectionStage
@@ -48,7 +49,9 @@ import java.net.NetworkInterface
 class SoftApCredentialsProvider(
     private val context: Context,
     private val scope: CoroutineScope,
-    private val settings: Settings
+    private val settings: Settings,
+    /** Whether a projection session is up, over whatever network carried it. */
+    private val sessionLive: () -> Boolean = { App.provide(context).commManager.isConnected }
 ) {
 
     companion object {
@@ -105,6 +108,9 @@ class SoftApCredentialsProvider(
     @Volatile private var apDownAtMs = 0L
     /** The ACC-off action already reported, so a car left off says so once. */
     @Volatile private var reportedAccOff: String? = null
+
+    /** The live session already reported as the reason for leaving the hotspot off. */
+    @Volatile private var reportedSessionLive = false
 
     /** So the once-per-second poll reports "nothing here" once, not thirty times. */
     @Volatile private var reportedNoInterface = false
@@ -291,6 +297,11 @@ class SoftApCredentialsProvider(
                             seenWokeAtMs = wokeAt
                             autoEnableAttempts = 0
                         }
+                        val live = try { sessionLive() } catch (e: Exception) { false }
+                        if (live && !reportedSessionLive) {
+                            AppLog.i("SoftApCredentials: a projection session is already live over another network, not switching this device's hotspot on - it would take the radio from that network.")
+                        }
+                        reportedSessionLive = live
                         if (SoftApAutoEnablePolicy.shouldAttempt(
                                 enabledInSettings = settings.autoEnableHotspot,
                                 attempts = autoEnableAttempts,
@@ -302,7 +313,8 @@ class SoftApCredentialsProvider(
                                 attemptInFlight = autoEnableInFlight,
                                 sinceWakeMs = if (wokeAt > runStartedAt) now - wokeAt else null,
                                 sinceApDownMs = apDownAtMs.takeIf { it > 0L }?.let { now - it },
-                                screenOff = screenIsOff())) {
+                                screenOff = screenIsOff(),
+                                sessionLive = live)) {
                             val attempt = ++autoEnableAttempts
                             autoEnableInFlight = true
                             AppLog.i("SoftApCredentials: No access point after ${waited / 1000}s — trying to switch this device's hotspot on (attempt $attempt of ${SoftApAutoEnablePolicy.MAX_ATTEMPTS}).")

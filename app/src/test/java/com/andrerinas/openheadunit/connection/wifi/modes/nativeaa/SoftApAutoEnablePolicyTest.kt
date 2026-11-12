@@ -12,6 +12,12 @@ class SoftApAutoEnablePolicyTest {
     }
 
     @Test
+    fun `a live session over another network is never interrupted by a hotspot start`() {
+        assertFalse(SoftApAutoEnablePolicy.shouldAttempt(true, 0, 251_000, 0, false, 251_000, sessionLive = true))
+        assertTrue(SoftApAutoEnablePolicy.shouldAttempt(true, 0, 251_000, 0, false, 251_000, sessionLive = false))
+    }
+
+    @Test
     fun `the first attempt waits for the grace`() {
         assertFalse(SoftApAutoEnablePolicy.shouldAttempt(true, 0, 4_999, 0, false, 4_999))
         assertTrue(SoftApAutoEnablePolicy.shouldAttempt(true, 0, 5_000, 0, false, 5_000))
